@@ -1,0 +1,83 @@
+HOST: http://www.typekit.com/
+
+
+--- Desktop API v1 ---
+---
+Typekit desktop font sync API. The API requests are authenticated by validating the OAuth bearer token issued by IMS and included in the request header.
+
+The sync font selection covers the entire family with all styles synced to the desktop machine. The font families are identified by an opaque id unique to each font family.
+
+Individual font variations are identified by a unique id which encapsulates particular font variation and font version.
+
+All comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
+---
+
+-- Font Download --
+
+Verifies that the API is available
+
+GET /
+< 200
+< Content-Type: text/html;charset=utf-8
+"desktop_v1"
+
+Generates a temporary signed URL to download the font resource.
+
+GET desktop_v1/sync/{font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 302
+< Content-Type: text/html;charset=utf-8
+< Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
+
+-- Sync Font Application Support
+
+
+List fonts in the sync collection. Returns an array of font families with each listing the available variations.
+
+GET desktop_v1/font_selection
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+"[{"family":"Coquette","opaque_id":"drjf","version": "1","variations":["Light","Regular","Bold"]},{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+
+Add fonts to the collection of sync fonts. To request a specific version of the font family 
+
+POST desktop_v1/font_selection
+> X-Access-Token: IMS_ACCESS_TOKEN
+> Content-Type: application/json
+"[{"opaque_id":"drjf","version": "1"},{"opaque_id":"vcsm","version":"1"}]"
+< 200
+< Content-Type: application/json
+
+Remove fonts from the collection of sync fonts
+
+DELETE desktop_v1/font_selection
+> X-Access-Token: IMS_ACCESS_TOKEN
+> Content-Type: application/json
+"[{"opaque_id":"drjf","version": "1"},{"opaque_id":"vcsm","version":"1"}]"
+< 200
+< Content-Type: application/json
+
+Accepts an array of font id's. It resolves the requested array against the typekit db and returns data conveying the availability of each font. 
+<p>For each font requested the status will be one of the following:</p>
+<li>licenced - the font is available for sync</li>
+<li>synced - the font is already in the user's sync font collection</li>
+<li>quota-exceeded - the font is available but the user has reached the sync font quota</li>
+<li>not-licesed - the user is not authorized to sync this font</li>
+<li>not-found - invalid font id</li>
+
+GET desktop_v1/resolved_sync_fonts?id[]={unique_font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+"[{"family":"Coquette","opaque_id":"drjf","version": "1","status":"licensed","variations":["Light","Regular","Bold"]},{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status": "quota-exceeded","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+
+Accepts an array of Postscript font names in Family-Style format (ex. Helvetica-Bold). The typekit service will match these to the available sync fonts and return a list of suggested alternatives.
+
+GET desktop_v1/resolved_system_fonts?id[]={postscript_font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+"[{"family":"Proxima Nova","opaque_id":"vcsm","ps_id":"ProximaNova-Regular","version":"1","status":"licensed","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+
+
