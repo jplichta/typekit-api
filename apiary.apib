@@ -1,13 +1,28 @@
 HOST: http://www.typekit.com/
 
 
---- Desktop API v1 ---
+--- Typekit Desktop API v1 ---
 ---
-Typekit desktop font sync API. The API requests are authenticated by validating the OAuth bearer token issued by IMS and included in the request header.
+### About this documentation
+This documentation describes the RESTful APIs provided by the Adobe Typekit service to anable the integration of the desktop font sync feature 
+into Adobe point products.
 
-The sync font selection covers the entire family with all styles synced to the desktop machine. The font families are identified by an opaque id unique to each font family.
+The Typekit service is designed to sync complete font families and this design is enforced by this API. 
+The font_selection endpoint binary data describes font families identified by an opaque id unique to each font family.
 
-Individual font variations are identified by a unique id which encapsulates particular font variation and font version.
+When the precise font family, style and version are known (ex. the font is used in a document), the individual font variations are identified 
+by a unique hash id.
+
+
+### Authentication
+The API requests are authenticated by validating the OAuth bearer token issued by IMS and included in the request header. 
+
+### Request rate limiting
+Version 1 of this API is intended for internal Adobe use. As such there are no enforced request rate limits
+
+
+
+
 
 All comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
 ---
