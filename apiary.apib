@@ -22,6 +22,19 @@ Version 1 of this API is intended for internal Adobe use. As such there are no e
 ### Data representation
 All request and response data is represented as JSON. XML is not supported.
 
+Sync font families are represented by the following JSON object:
+
+    {
+        "family": "Coquette",
+        "opaque_id": "drjf",
+        "version": "1",
+        "status": "licensed",
+        "variations": [
+            "Light",
+            "Regular",
+            "Bold"
+        ]
+    },
 ### Editing and comments
 This page and all comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
 ---
@@ -47,13 +60,17 @@ GET desktop_v1/sync/{font_id}
 
 List fonts in the sync collection. Returns an array of font families with each listing the available variations.
 
+This action is idempotent.
+
 GET desktop_v1/font_selection
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
 "[{"family":"Coquette","opaque_id":"drjf","version": "1","variations":["Light","Regular","Bold"]},{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
 
-Add fonts to the collection of sync fonts. To request a specific version of the font family 
+Add fonts to the collection of sync fonts. The action requires family opaque_id and version. 
+If version is omitted, the latest version of the requested family will be added to the font selection.
+
 
 POST desktop_v1/font_selection
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -62,7 +79,9 @@ POST desktop_v1/font_selection
 < 200
 < Content-Type: application/json
 
-Remove fonts from the collection of sync fonts
+Remove fonts from the collection of sync fonts.
+
+This action is idempotent.
 
 DELETE desktop_v1/font_selection
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -85,12 +104,14 @@ GET desktop_v1/resolved_sync_fonts?id[]={unique_font_id}
 < Content-Type: application/json
 "[{"family":"Coquette","opaque_id":"drjf","version": "1","status":"licensed","variations":["Light","Regular","Bold"]},{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status": "quota-exceeded","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
 
-Accepts an array of Postscript font names in Family-Style format (ex. Helvetica-Bold). The typekit service will match these to the available sync fonts and return a list of suggested alternatives.
+Accepts an array of Postscript font names in Family-Style format (ex. Helvetica-Bold). 
+The typekit service will match these to the available sync fonts and return a list of suggested alternatives.
+The returned array has the same length and sort order as the array in the request. Fonts that cannot be matched are represented by nil array entries.
 
 GET desktop_v1/resolved_system_fonts?id[]={postscript_font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
-"[{"family":"Proxima Nova","opaque_id":"vcsm","ps_id":"ProximaNova-Regular","version":"1","status":"licensed","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+"[{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status":"licensed","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
 
 
