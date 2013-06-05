@@ -7,12 +7,6 @@ HOST: http://www.typekit.com/
 This documentation describes the RESTful APIs provided by the Adobe Typekit service to anable the integration of the desktop font sync feature 
 into Adobe point products.
 
-The Typekit service is designed to sync complete font families and this design is enforced by this API. 
-The font_selection endpoint binary data describes font families identified by an opaque id unique to each font family.
-
-When the precise font family, style and version are known (ex. the font is used in a document), the individual font variations are identified 
-by a unique hash id.
-
 ### Authentication
 The API requests are authenticated by validating the OAuth bearer token issued by IMS and included in the request header. 
 
@@ -22,19 +16,29 @@ Version 1 of this API is intended for internal Adobe use. As such there are no e
 ### Data representation
 All request and response data is represented as JSON. XML is not supported.
 
-Sync font families are represented by the following JSON object:
+The Typekit service maintains user specific selection of fonts which are synced to authorized desktop computers. 
+While the user modifies the font selection based on complete font families the underlying data is font variation based.
+The font selection API is therefore also font variation based thus allowing the client software to add a specific font style to the selection collection.
+
+Font variations are represented by the following JSON object:
 
     {
-        "family": "Coquette",
-        "opaque_id": "drjf",
-        "version": "1",
-        "status": "licensed",
-        "variations": [
-            "Light",
-            "Regular",
-            "Bold"
-        ]
-    },
+        "font_id": "TkD-99-abcd",
+        "name": "Condensed Itallic",
+        "family": {
+            "id": "abc",
+            "name": "Coquette",
+            "link": "GET https://font_family/abc"
+        }
+    }
+
+Font selection status:
+
+* licensed - the font variation can be added to font selection
+* synced - the font variation is already in the font selection
+* not-licensed - the font variation exists but the user is not authorized to use it
+* not-found - the font id does not match a known font variation
+
 ### Editing and comments
 This page and all comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
 ---
@@ -114,4 +118,9 @@ GET desktop_v1/resolved_system_fonts?id[]={postscript_font_id}
 < Content-Type: application/json
 "[{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status":"licensed","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
 
+Get user subscription info, specifically provide quota information
 
+GET desktop_v1/subscription_info
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
