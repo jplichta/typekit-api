@@ -88,8 +88,6 @@ GET sync/{font_id}
 
 List fonts in the sync collection. Returns an array of font families with each listing the available variations.
 
-This action is idempotent.
-
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
 GET font_selection
@@ -98,14 +96,26 @@ GET font_selection
 < Content-Type: application/json
 "[{"font_id":"TkD-100-hdnoine93k","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-101-hdnoine93k","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-102-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}]"
 
-Add fonts to the collection of sync fonts. The action requires family opaque_id and version. 
-If version is omitted, the latest version of the requested family will be added to the font selection.
+Retrieve the description of a particular font variation from the font selection collection.
 
+Returns HTTP status 200 if variation found in font selection or 404 if not found.
+
+GET font_selection/{font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+"{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
++++++
+< 404
+< Content-Type: application/json
+"{"message": "Font variation not found"}"
+
+Add font variations to the font selection. 
 
 POST font_selection
 > X-Access-Token: IMS_ACCESS_TOKEN
 > Content-Type: application/json
-"[{"opaque_id":"drjf","version": "1"},{"opaque_id":"vcsm","version":"1"}]"
+"["TkD-100-hdnoine93k","TkD-100-8hh82kj02e","TkD-100-2jt9s6h8lq"]"
 < 200
 < Content-Type: application/json
 
