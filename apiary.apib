@@ -90,11 +90,13 @@ List fonts in the sync collection. Returns an array of font families with each l
 
 This action is idempotent.
 
-GET font_selection/{font_id}
+The example models a user who has all 3 variations of the Coquette font in the font selection.
+
+GET font_selection
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
-"[{"family":"Coquette","opaque_id":"drjf","version": "1","variations":["Light","Regular","Bold"]},{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+"[{"font_id":"TkD-100-hdnoine93k","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-101-hdnoine93k","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-102-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}]"
 
 Add fonts to the collection of sync fonts. The action requires family opaque_id and version. 
 If version is omitted, the latest version of the requested family will be added to the font selection.
