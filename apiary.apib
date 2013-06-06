@@ -13,26 +13,38 @@ The API requests are authenticated by validating the OAuth bearer token issued b
 ### Request rate limiting
 Version 1 of this API is intended for internal Adobe use. As such there are no enforced request rate limits
 
-### Data representation
+### Data structures
 All request and response data is represented as JSON. XML is not supported.
 
 The Typekit service maintains user specific selection of fonts which are synced to authorized desktop computers. 
 While the user modifies the font selection based on complete font families the underlying data is font variation based.
 The font selection API is therefore also font variation based thus allowing the client software to add a specific font style to the selection collection.
 
-Font variations are represented by the following JSON object:
+#### Font variation JSON object:
 
     {
         "font_id": "TkD-99-abcd",
         "name": "Condensed Itallic",
         "family": {
-            "id": "abc",
+            "id": "drjf",
             "name": "Coquette",
-            "link": "GET https://font_family/abc"
+            "links": "https://typekit.com/api/desktop_v1/font_family/drjf"
         }
     }
 
-Font selection status:
+#### Font family JSON object:
+
+    {
+        "id": "drjf",
+        "name": "Coquette",
+        "biography": "Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early â€™90s. To me, it feels like it has always existed, even though Iâ€™ve never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"",
+        "links": {
+            "self": "https://typekit.com/api/desktop_v1/font_family/drjf",
+            "html": "https://typekit.com/fonts/coquette",
+            "purchase": "http://www.fonts.com/findfonts/mondosearchresults.htm?st=12&kid=Coquette"
+        }
+    }
+####Font selection status:
 
 * licensed - the font variation can be added to font selection
 * synced - the font variation is already in the font selection
@@ -47,7 +59,7 @@ This page and all comments can be written in [Markdown](http://daringfireball.ne
 
 Verifies that the API is available
 
-GET /
+GET desktop_v1
 < 200
 < Content-Type: text/html;charset=utf-8
 "desktop_v1"
@@ -95,12 +107,6 @@ DELETE desktop_v1/font_selection
 < Content-Type: application/json
 
 Accepts an array of font id's. It resolves the requested array against the typekit db and returns data conveying the availability of each font. 
-<p>For each font requested the status will be one of the following:</p>
-<li>licenced - the font is available for sync</li>
-<li>synced - the font is already in the user's sync font collection</li>
-<li>quota-exceeded - the font is available but the user has reached the sync font quota</li>
-<li>not-licesed - the user is not authorized to sync this font</li>
-<li>not-found - invalid font id</li>
 
 GET desktop_v1/resolved_sync_fonts?id[]={unique_font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -124,3 +130,11 @@ GET desktop_v1/subscription_info
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
+
+Get metadata for a font family
+
+GET desktop_v1/font_family/{family_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+
