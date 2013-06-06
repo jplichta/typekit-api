@@ -7,8 +7,17 @@ HOST: http://typekit.com/api/desktop_v1
 This documentation describes the RESTful APIs provided by the Adobe Typekit service to anable the integration of the desktop font sync feature 
 into Adobe point products.
 
+For API examples this document uses two font families: 
+
+* Coquette (id drjf) with Ligth, Regular and Bold variations
+* Proxima Nova (id vcsm) with Black, Thin and Regular variations. For 
+
+Each font_id used matches the actual typekit data. Data which is temporary, such as tokens, is mocked up using all caps.
+
 ### Authentication
 The API requests are authenticated by validating the OAuth bearer token issued by IMS and included in the request header. 
+Since the token contains both the user id and the client id the typekit service can use it to authenticate the user and track the origin of the request.
+The requests are valid for the duration of the access token.
 
 ### Request rate limiting
 Version 1 of this API is intended for internal Adobe use. As such there are no enforced request rate limits
