@@ -9,10 +9,11 @@ into Adobe point products.
 
 For API examples this document uses two font families: 
 
-* Coquette (id drjf) with Ligth, Regular and Bold variations
-* Proxima Nova (id vcsm) with Black, Thin and Regular variations. For 
+* Coquette (opaque id drjf) with Ligth, Regular and Bold variations
+* Proxima Nova (opaque id vcsm) with Black, Thin and Regular variations. For 
 
-Each font_id used matches the actual typekit data. Data which is temporary, such as tokens, is mocked up using all caps.
+Other font family and font variation properties use consistent but made up values and should not be relied on for actual database queries. 
+Data which is temporary, such as tokens, is mocked up using all caps.
 
 ### Authentication
 The API requests are authenticated by validating the OAuth bearer token issued by IMS and included in the request header. 
@@ -32,12 +33,13 @@ The font selection API is therefore also font variation based thus allowing the 
 #### Font variation JSON object:
 
     {
-        "font_id": "TkD-99-abcd",
-        "name": "Condensed Itallic",
-        "family": {
-            "id": "drjf",
-            "name": "Coquette",
-            "links": "https://typekit.com/api/desktop_v1/font_family/drjf"
+        "font_id": "TkD-100-2jt9s6h8lq",
+        "family_id": "drjf",
+        "style": "Thin",
+        "family": "Coquette",
+        "links": {
+            "self": "https://typekit.com/api/desktop_v1/font_variation/TkD-100-2jt9s6h8lq",
+            "family": "https://typekit.com/api/desktop_v1/font_family/drjf"
         }
     }
 
@@ -54,6 +56,7 @@ The font selection API is therefore also font variation based thus allowing the 
         }
     }
 ####Font selection status:
+Some endpoints need to communicate the availability of the requested font variation. The following constants are used:
 
 * licensed - the font variation can be added to font selection
 * synced - the font variation is already in the font selection
@@ -87,7 +90,7 @@ List fonts in the sync collection. Returns an array of font families with each l
 
 This action is idempotent.
 
-GET font_selection
+GET font_selection/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
