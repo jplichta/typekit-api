@@ -110,25 +110,27 @@ GET font_selection/{font_id}
 < Content-Type: application/json
 "{"message": "Font variation not found"}"
 
-Add font variations to the font selection. 
+Add a single font variations to the font selection. 
 
-POST font_selection
+POST font_selection/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
-> Content-Type: application/json
-"["TkD-100-hdnoine93k","TkD-100-8hh82kj02e","TkD-100-2jt9s6h8lq"]"
 < 200
 < Content-Type: application/json
++++++
+< 400
+< Content-Type: application/json
+{"message": "bad request"}
 
-Remove fonts from the collection of sync fonts.
+Remove a font variation from the collection of sync fonts.
 
-This action is idempotent.
-
-DELETE desktop_v1/font_selection
+DELETE desktop_v1/font_selection/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
-> Content-Type: application/json
-"[{"opaque_id":"drjf","version": "1"},{"opaque_id":"vcsm","version":"1"}]"
 < 200
 < Content-Type: application/json
++++++
+< 400
+< Content-Type: application/json
+{"message": "bad request"}
 
 Accepts an array of font id's. It resolves the requested array against the typekit db and returns data conveying the availability of each font. 
 
