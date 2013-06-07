@@ -217,13 +217,15 @@ DELETE desktop_v1/font_selection/{user_id}/{font_id}
 
 -- Font Replacement
 
-Accepts an array of font id's. It resolves the requested array against the typekit db and returns data conveying the availability of each font. 
+Accepts an array of font id's. 
+It resolves the requested array against the typekit db 
+and returns an array of status, variation pairs. 
 
-GET resolved_sync_fonts?id[]={unique_font_id}
+GET resolved_sync_fonts?id[]={font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
-"[{"family":"Coquette","opaque_id":"drjf","version": "1","status":"licensed","variations":["Light","Regular","Bold"]},{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status": "quota-exceeded","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+[{"status":"licensed","variation":{"font_id":"TkD-100-hdnoine93k","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-101-hdnoine93k","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}},{"status":"synced","variation":{"font_id":"TkD-101-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}},{"status":"not-found","font_id":"TkD-104-8hh82kj02e"}]
 
 Accepts an array of Postscript font names in Family-Style format (ex. Helvetica-Bold). 
 The typekit service will match these to the available sync fonts and return a list of suggested alternatives.
