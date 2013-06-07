@@ -161,7 +161,7 @@ GET font_variation/{font_id}
 
 -- Font Selection
 
-List fonts in the sync collection. Returns an array of font families with each listing the available variations.
+List selected fonts for a particular user. Returns an array of font variations.
 
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
@@ -180,6 +180,14 @@ GET font_selection/{user_id}/{font_id}
 < 200
 < Content-Type: application/json
 "{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
++++++
+< 400
+< Content-Type: application/json
+"{"message": "Font variation id not valid"}"
++++++
+< 403
+< Content-Type: application/json
+"{"message": "Font variation not licensed"}"
 +++++
 < 404
 < Content-Type: application/json
