@@ -120,10 +120,15 @@ GET sync/{font_id}
 -- Metadata
 Retrieve user subscription info, specifically provide quota information
 
-GET subscription_info
+GET user_info/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
+"{"user_id":"7F8F5A114A01713D9920FAAE@AdobeID","quota_used":12,"quota_total":30}"
++++++
+< 404
+< Content-Type: application/json
+"{"message":"user not found"}"
 
 Retrieve font family description
 
@@ -131,6 +136,11 @@ GET font_family/{family_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
+"{"id":"drjf","name":"Coquette","biography":"Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early â€™90s. To me, it feels like it has always existed, even though Iâ€™ve never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"","links":{"self":"https://typekit.com/api/desktop_v1/font_family/drjf","html":"https://typekit.com/fonts/coquette","purchase":"http://www.fonts.com/findfonts/mondosearchresults.htm?st=12&kid=Coquette"}}"
++++++
+< 404
+< Content-Type: application/json
+"{"message":"font family not found"}"
 
 Retrieve font variation description
 
@@ -138,6 +148,15 @@ GET font_variation/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
+"{"id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
++++++
+< 400
+< Content-Type: application/json
+"{"message":"bad font variation id"}"
++++++
+< 404
+< Content-Type: application/json
+"{"message":"font variation not found"}"
 
 
 -- Font Selection
@@ -207,3 +226,6 @@ GET resolved_system_fonts?id[]={postscript_font_id}
 < 200
 < Content-Type: application/json
 "[{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status":"licensed","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
+
+-- JSON Schema Validations --
+
