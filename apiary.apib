@@ -54,7 +54,7 @@ The font selection API is therefore also font variation based thus allowing the 
 #### Font variation JSON object:
 
     {
-        "font_id": "TkD-100-2jt9s6h8lq",
+        "id": "TkD-100-2jt9s6h8lq",
         "family_id": "drjf",
         "style": "Thin",
         "family": "Coquette",
@@ -76,6 +76,18 @@ The font selection API is therefore also font variation based thus allowing the 
             "purchase": "http://www.fonts.com/findfonts/mondosearchresults.htm?st=12&kid=Coquette"
         }
     }
+    
+####User Info JSON Object
+
+    {
+        "id": "7F8F5A114A01713D9920FAAE@AdobeID",
+        "quota_used": 12,
+        "quota_total": 30,
+        "links": {
+            "self": "https://typekit.com/api/desktop_v1/user_info/7F8F5A114A01713D9920FAAE@AdobeID"
+        }
+    }
+
 ####Font selection status:
 Some endpoints need to communicate the availability of the requested font variation. The following constants are used:
 
@@ -105,13 +117,36 @@ GET sync/{font_id}
 < Content-Type: text/html;charset=utf-8
 < Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
 
--- Sync Font Application Support
+-- Metadata
+Retrieve user subscription info, specifically provide quota information
+
+GET subscription_info
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+
+Retrieve font family description
+
+GET font_family/{family_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+
+Retrieve font variation description
+
+GET font_variation/{font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+
+
+-- Font Selection
 
 List fonts in the sync collection. Returns an array of font families with each listing the available variations.
 
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
-GET font_selection
+GET font_selection/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -121,7 +156,7 @@ Retrieve the description of a particular font variation from the font selection 
 
 Returns HTTP status 200 if variation found in font selection or 404 if not found.
 
-GET font_selection/{font_id}
+GET font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -133,7 +168,7 @@ GET font_selection/{font_id}
 
 Add a single font variations to the font selection. 
 
-POST font_selection/{font_id}
+POST font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -144,7 +179,7 @@ POST font_selection/{font_id}
 
 Remove a font variation from the collection of sync fonts.
 
-DELETE desktop_v1/font_selection/{font_id}
+DELETE desktop_v1/font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -152,6 +187,8 @@ DELETE desktop_v1/font_selection/{font_id}
 < 400
 < Content-Type: application/json
 {"message": "bad request"}
+
+-- Font Replacement
 
 Accepts an array of font id's. It resolves the requested array against the typekit db and returns data conveying the availability of each font. 
 
@@ -170,18 +207,3 @@ GET resolved_system_fonts?id[]={postscript_font_id}
 < 200
 < Content-Type: application/json
 "[{"family":"Proxima Nova","opaque_id":"vcsm","version":"1","status":"licensed","variations":["Black","Black Italic","Bold","Bold Italic","Extrabold","Extrabold Italic","Thin","Thin Italic","Regular"]}]"
-
-Get user subscription info, specifically provide quota information
-
-GET subscription_info
-> X-Access-Token: IMS_ACCESS_TOKEN
-< 200
-< Content-Type: application/json
-
-Get metadata for a font family
-
-GET font_family/{family_id}
-> X-Access-Token: IMS_ACCESS_TOKEN
-< 200
-< Content-Type: application/json
-
