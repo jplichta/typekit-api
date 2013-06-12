@@ -89,12 +89,14 @@ The font selection API is therefore also font variation based thus allowing the 
     }
 
 ####Font selection status:
-Some endpoints need to communicate the availability of the requested font variation. The following constants are used:
+Some endpoints need to communicate the availability of the requested font variation. The following HTTP standard response codes are used:
 
-* licensed - the font variation can be added to font selection
-* synced - the font variation is already in the font selection
-* not-licensed - the font variation exists but the user is not authorized to use it
-* not-found - the font id does not match a known font variation
+* 200 - OK
+* 204 - font variation not selected
+* 400 - bad font variation id
+* 401 - expired access token
+* 403 - font variation not licensed
+* 404 - font variation not found
 
 ### Editing and comments
 This page and all comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
@@ -130,7 +132,7 @@ GET user_info/{user_id}
 < Content-Type: application/json
 "{"message":"user not found"}"
 
-Retrieve font family description
+Retrieve font family description. Family id is the opaque id assigned to each typekit font family. Returns font family JSON object if found.
 
 GET font_family/{family_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -161,7 +163,7 @@ GET font_variation/{font_id}
 
 -- Font Selection
 
-List selected fonts for a particular user. Returns an array of font variations.
+List selected fonts for a particular user. Returns a JSON array of font variation objects.
 
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
@@ -173,13 +175,17 @@ GET font_selection/{user_id}
 
 Retrieve the description of a particular font variation from the font selection collection.
 
-Returns HTTP status 200 if variation found in font selection or 404 if not found.
+If the font variation is not selected by the user this method returns 204. The request is correct but there is no content associated with this query.
 
 GET font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
 "{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
++++++
+< 204
+< Content-Type: application/json
+"{"message": "Font variation not selected"}"
 +++++
 < 400
 < Content-Type: application/json
@@ -203,6 +209,10 @@ POST font_selection/{user_id}/{font_id}
 < 400
 < Content-Type: application/json
 {"message": "bad request"}
++++++
+< 403
+< Content-Type: application/json
+"{"message": "Font variation not licensed"}"
 
 Remove a font variation from the collection of sync fonts.
 
