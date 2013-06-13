@@ -1,7 +1,6 @@
-HOST: http://typekit.com/api/v1/desktop
+HOST: http://typekit.com/api/v1
 
-
---- Typekit version 1 Desktop API ---
+--- Typekit API ---
 ---
 ### About this documentation
 This documentation describes the RESTful APIs provided by the Adobe Typekit service to anable the integration of the desktop font sync feature 
@@ -119,22 +118,14 @@ This page and all comments can be written in [Markdown](http://daringfireball.ne
 
 ---
 
--- Font Download --
+-- Health & Status
 
 Verifies that the API is available
 
 GET /
 < 200
 < Content-Type: text/html;charset=utf-8
-"desktop_v1"
-
-Generates a temporary signed URL to download the font resource.
-
-GET sync/{font_id}
-> X-Access-Token: IMS_ACCESS_TOKEN
-< 302
-< Content-Type: text/html;charset=utf-8
-< Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
+"Typekit API v1"
 
 -- Metadata
 Retrieve user subscription info, specifically provide quota information. Authenticated user must match user_id.
@@ -153,7 +144,7 @@ Retrieve font family description. Family id is the opaque id assigned to each ty
 
 Does not require authentication.
 
-GET font_family/{family_id}
+GET font/family/{family_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -167,7 +158,7 @@ Retrieve sync font description
 
 Does not require authentication.
 
-GET sync_font/{font_id}
+GET font/sync_variation/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -182,13 +173,24 @@ GET sync_font/{font_id}
 "{"message":"font variation not found"}"
 
 
+-- Font Download --
+
+Generates a temporary signed URL to download the font resource.
+
+GET desktop/sync/{font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 302
+< Content-Type: text/html;charset=utf-8
+< Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
+
+
 -- Font Selection
 
 List selected fonts for a particular user. Returns a JSON array of font variation objects.
 
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
-GET font_selection/{user_id}
+GET desktop/font_selection/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -198,7 +200,7 @@ Retrieve the description of a particular font variation from the font selection 
 
 If the font variation is not selected by the user this method returns 204. The request is correct but there is no content associated with this query.
 
-GET font_selection/{user_id}/{font_id}
+GET desktop/font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -222,7 +224,7 @@ GET font_selection/{user_id}/{font_id}
 
 Add a single font variations to the font selection. 
 
-POST font_selection/{user_id}/{font_id}
+POST desktop/font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -237,7 +239,7 @@ POST font_selection/{user_id}/{font_id}
 
 Remove a font variation from the collection of sync fonts.
 
-DELETE desktop_v1/font_selection/{user_id}/{font_id}
+DELETE desktop/desktop_v1/font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -251,7 +253,7 @@ DELETE desktop_v1/font_selection/{user_id}/{font_id}
 Accepts a Postscript font name in Family-Style format (ex. Helvetica-Bold). 
 This method matches it to the available sync fonts and returns a suggested alternative.
 
-GET resolve_system_font?id={postscript_font_id}
+GET desktop/resolve_system_font?id={postscript_font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
