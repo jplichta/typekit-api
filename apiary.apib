@@ -9,7 +9,7 @@ into Adobe point products.
 For API examples this document uses two font families: 
 
 * Coquette (opaque id drjf) with Ligth, Regular and Bold variations
-* Proxima Nova (opaque id vcsm) with Black, Thin and Regular variations. For 
+* Proxima Nova (opaque id Proxima) with Black, Thin and Regular variations. For 
 
 Other font family and sync font properties use consistent but made up values and should not be relied on for actual database queries. 
 Data which is temporary, such as tokens, is mocked up using all caps.
@@ -97,6 +97,20 @@ This data represents a single font variation of a particular version as synced t
         }
     }
 
+#### System font JSON Object
+
+This is the data filled in by the client when requesting a match for a missing system font.
+
+    {
+        "postscript_name": "ProximaNova-Black",
+        "style_name": "Black",
+        "native_style_name": "Black",
+        "full_name": "Proxima Nova Black",
+        "native_full_name": "Proxima Nova Black",
+        "type": "TrueType",
+        "version": "1.0.0"
+    }
+
 ####Font selection status:
 Some endpoints need to communicate the availability of the requested sync font. The following HTTP standard response codes are used:
 
@@ -112,9 +126,7 @@ This page and all comments can be written in [Markdown](http://daringfireball.ne
 
 ### Open issues
 
-* Single API vs. desktop specific and general APIs. Namespaces for APIs.
 * Single font vs. array CRUD requests
-* Client authentication
 
 ---
 
@@ -175,7 +187,7 @@ GET font/sync_variation/{font_id}
 
 -- Font Download --
 
-Generates a temporary signed URL to download the font resource.
+Generates a temporary signed URL to download the font resource. The requested font is provisioned for the user bearing the access token.
 
 GET desktop/sync/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -250,14 +262,15 @@ DELETE desktop/desktop_v1/font_selection/{user_id}/{font_id}
 
 -- Font Replacement
 
-Accepts a Postscript font name in Family-Style format (ex. Helvetica-Bold). 
+Accepts a filled in system font JSON object.
 This method matches it to the available sync fonts and returns a suggested alternative.
 
-GET desktop/resolve_system_font?id={postscript_font_id}
+GET desktop/resolve_system_font?{ps_id,type,version}
 > X-Access-Token: IMS_ACCESS_TOKEN
+{"postscript_name":"ProximaNova-Black","style_name":"Black","native_style_name":"Black","full_name":"Proxima Nova Black","native_full_name":"Proxima Nova Black","type":"TrueType","version":"1.0.0"}
 < 200
 < Content-Type: application/json
-"{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
+"{"font_id":"TkD-100-7k90dn92ul","family_id":"vcsm","style":"Black","family":"Proxima Nova","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-7k90dn92ul","family":"https://typekit.com/api/desktop_v1/font_family/vcsm"}}"
 
 -- JSON Schema Validations --
 
