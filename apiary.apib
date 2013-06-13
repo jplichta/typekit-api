@@ -12,7 +12,7 @@ For API examples this document uses two font families:
 * Coquette (opaque id drjf) with Ligth, Regular and Bold variations
 * Proxima Nova (opaque id vcsm) with Black, Thin and Regular variations. For 
 
-Other font family and font variation properties use consistent but made up values and should not be relied on for actual database queries. 
+Other font family and sync font properties use consistent but made up values and should not be relied on for actual database queries. 
 Data which is temporary, such as tokens, is mocked up using all caps.
 
 ### Schema
@@ -41,8 +41,16 @@ The API requests are authenticated by validating the OAuth bearer token issued b
 Since the token contains both the user id and the client id the typekit service can use it to authenticate the user and track the origin of the request.
 The requests are valid for the duration of the access token.
 
+Methods which return publicly available data, such as font family information, do not require authentication.
+
 ### Request rate limiting
 Version 1 of this API is intended for internal Adobe use. As such there are no enforced request rate limits
+
+### Localization
+
+Human readable text in the response data is localized for the set of languages supported by the Typekit site. 
+The desired language can be specified in the Accept-Language field of the content header.
+The response will then set the Content-Language header as well as the Vary header.
 
 ### Data structures
 All request and response data is represented as JSON. XML is not supported.
@@ -51,7 +59,9 @@ The Typekit service maintains user specific selection of fonts which are synced 
 While the user modifies the font selection based on complete font families the underlying data is font variation based.
 The font selection API is therefore also font variation based thus allowing the client software to add a specific font style to the selection collection.
 
-#### Font variation JSON object:
+#### Sync font JSON object
+
+This data represents a single font variation of a particular version as synced to the desktop.
 
     {
         "id": "TkD-100-2jt9s6h8lq",
@@ -89,14 +99,14 @@ The font selection API is therefore also font variation based thus allowing the 
     }
 
 ####Font selection status:
-Some endpoints need to communicate the availability of the requested font variation. The following HTTP standard response codes are used:
+Some endpoints need to communicate the availability of the requested sync font. The following HTTP standard response codes are used:
 
 * 200 - OK
-* 204 - font variation not selected
-* 400 - bad font variation id
+* 204 - font not selected
+* 400 - bad font id
 * 401 - expired access token
-* 403 - font variation not licensed
-* 404 - font variation not found
+* 403 - font not licensed
+* 404 - font not found
 
 ### Editing and comments
 This page and all comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
@@ -104,10 +114,8 @@ This page and all comments can be written in [Markdown](http://daringfireball.ne
 ### Open issues
 
 * Single API vs. desktop specific and general APIs. Namespaces for APIs.
-* Single font variation vs. array CRUD requests
-* Localization of strings and hyperlinks
+* Single font vs. array CRUD requests
 * Client authentication
-* Allowing some requests to be unauthenticated. Would this require rate limiting?
 
 ---
 
@@ -129,7 +137,7 @@ GET sync/{font_id}
 < Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
 
 -- Metadata
-Retrieve user subscription info, specifically provide quota information
+Retrieve user subscription info, specifically provide quota information. Authenticated user must match user_id.
 
 GET user_info/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -143,6 +151,8 @@ GET user_info/{user_id}
 
 Retrieve font family description. Family id is the opaque id assigned to each typekit font family. Returns font family JSON object if found.
 
+Does not require authentication.
+
 GET font_family/{family_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
@@ -153,13 +163,15 @@ GET font_family/{family_id}
 < Content-Type: application/json
 "{"message":"font family not found"}"
 
-Retrieve font variation description
+Retrieve sync font description
 
-GET font_variation/{font_id}
+Does not require authentication.
+
+GET sync_font/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
-"{"id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
+"{"id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/sync_font/TkD-100-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
 +++++
 < 400
 < Content-Type: application/json
@@ -180,7 +192,7 @@ GET font_selection/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
-"[{"font_id":"TkD-100-hdnoine93k","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-101-hdnoine93k","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-102-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}]"
+"[{"font_id":"TkD-100-hdnoine93k","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/sync_font/TkD-101-hdnoine93k","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/sync_font/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}},{"font_id":"TkD-100-2jt9s6h8lq","family_id":"drjf","style":"Thin","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/sync_font/TkD-102-2jt9s6h8lq","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}]"
 
 Retrieve the description of a particular font variation from the font selection collection.
 
@@ -190,7 +202,7 @@ GET font_selection/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
-"{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
+"{"font_id":"TkD-100-8hh82kj02e","family_id":"drjf","style":"Regular","family":"Coquette","links":{"self":"https://typekit.com/api/desktop_v1/sync_font/TkD-100-8hh82kj02e","family":"https://typekit.com/api/desktop_v1/font_family/drjf"}}"
 +++++
 < 204
 < Content-Type: application/json
