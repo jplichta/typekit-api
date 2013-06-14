@@ -302,6 +302,13 @@ DELETE desktop/selections/{user_id}/{font_id}
 Accepts a filled in system font JSON object.
 This method matches it to the available sync fonts and returns a suggested alternative.
 
+<table>
+    <th>Required JSON body</th>
+    <tr>
+    <td>postscript_name</td>
+    </tr>
+</table>
+
 GET desktop/match
 > X-Access-Token: IMS_ACCESS_TOKEN
 {"postscript_name":"ProximaNova-Black","style_name":"Black","native_style_name":"Black","full_name":"Proxima Nova Black","native_full_name":"Proxima Nova Black","type":"TrueType","version":"1.0.0"}
