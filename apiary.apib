@@ -1,4 +1,4 @@
-HOST: http://typekit.com/api/v2
+HOST: http://typekit.com/api/v1
 
 --- Typekit API ---
 ---
@@ -160,6 +160,14 @@ GET /
 
 Retrieve the info describing the authenticated user, specifically provide quota information.
 
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
 GET user
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
@@ -173,14 +181,21 @@ GET user
 -- 
 Browsing
 These end points retrieve the underlying model for font families, variations and libraries. Authentication is not required.
+
+*Note*: These endpoints are deployed as part of the Typekit V1 API.
 --
 
 Retrieve font family description. Family id is the opaque id assigned to each typekit font family. Returns font family JSON object if found.
 
-Does not require authentication.
+<table>
+    <th>URI parameters </th>
+    <tr>
+    <td>family id</td>
+    <td>4 character opaque id unique to each family</td>
+    </tr>
+</table>
 
 GET families/{family_id}
-> X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
 "{"id":"drjf","name":"Coquette","biography":"Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early â€™90s. To me, it feels like it has always existed, even though Iâ€™ve never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"","links":{"self":"https://typekit.com/api/desktop_v1/font_family/drjf","html":"https://typekit.com/fonts/coquette","purchase":"http://www.fonts.com/findfonts/mondosearchresults.htm?st=12&kid=Coquette"}}"
@@ -189,16 +204,24 @@ GET families/{family_id}
 < Content-Type: application/json
 "{"message":"font family not found"}"
 
-Retrieve font variation description.
+Retrieve web font variation description.
 
-Does not require authentication.
+<table>
+    <th>URI parameters </th>
+    <tr>
+    <td>family id</td>
+    <td>4 character opaque id unique to each family</td>
+    </tr>
+    <tr>
+    <td>variation id</td>
+    <td>2 character id identifying the variation.</td>
+    </tr>
+</table>
 
-GET variations/{variation_id}
-> X-Access-Token: IMS_ACCESS_TOKEN
+GET variations/{family_id}/{variation_id}
 < 200
 < Content-Type: application/json
-"{"id":"drjf","name":"Coquette","biography":"Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early â€™90s. To me, it feels like it has always existed, even though Iâ€™ve never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"","links":{"self":"https://typekit.com/api/desktop_v1/font_family/drjf","html":"https://typekit.com/fonts/coquette","purchase":"http://www.fonts.com/findfonts/mondosearchresults.htm?st=12&kid=Coquette"}}"
-+++++
+{"variation":{"name":"Coquette Light","id":"drjf:n3","font_variant":"normal","libraries":[{"name":"Personal Library","link":"/api/v1/json/libraries/personal","id":"personal"},{"name":"Full Library","link":"/api/v1/json/libraries/full","id":"full"}],"family":{"name":"Coquette","link":"/api/v1/json/families/drjf","id":"drjf"},"foundry":{"name":"Mark Simonson Studio","slug":"mark-simonson-studio"},"font_style":"normal","postscript_name":"Coquette-Light","font_weight":"300"}}+++++
 < 404
 < Content-Type: application/json
 "{"message":"font family not found"}"
@@ -220,7 +243,24 @@ GET desktop/sync/{font_id}
 
 Retrieve the description for a specific version of a desktop font.
 
-Does not require authentication.
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
+<table>
+    <th>URI parameters </th>
+    <th></th>
+    <th>Format</th>
+    <tr>
+    <td>font id</td>
+    <td>unique id describing particular desktop font variation and version</td>
+    <td>TkD-[0-9]{3,5}-[a-z0-9]{40}</td>
+    </tr>
+</table>
 
 GET desktop/fonts/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -241,6 +281,25 @@ List selected fonts for a particular user. Returns a JSON array of font variatio
 
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
+<table>
+    <th>URI parameters </th>
+    <th></th>
+    <th>Format</th>
+    <tr>
+    <td>user id</td>
+    <td>URL encoded Adobe profile ID</td>
+    <td>[A-Z0-9]{24}%40AdobeID</td>
+    </tr>
+</table>
+
 GET desktop/selections/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
@@ -250,6 +309,30 @@ GET desktop/selections/{user_id}
 Retrieve the description of a particular font variation from the font selection collection.
 
 If the font variation is not selected by the user this method returns 204. The request is correct but there is no content associated with this query.
+
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
+<table>
+    <th>URI parameters </th>
+    <th></th>
+    <th>Format</th>
+    <tr>
+    <td>user id</td>
+    <td>URL encoded Adobe profile ID</td>
+    <td>[A-Z0-9]{24}%40AdobeID</td>
+    </tr>
+    <tr>
+    <td>font id</td>
+    <td>unique id describing particular desktop font variation and version</td>
+    <td>TkD-[0-9]{3,5}-[a-z0-9]{40}</td>
+    </tr>
+</table>
 
 GET desktop/selections/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
