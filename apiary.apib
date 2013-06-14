@@ -222,6 +222,7 @@ GET variations/{family_id}/{variation_id}
 < 200
 < Content-Type: application/json
 {"variation":{"name":"Coquette Light","id":"drjf:n3","font_variant":"normal","libraries":[{"name":"Personal Library","link":"/api/v1/json/libraries/personal","id":"personal"},{"name":"Full Library","link":"/api/v1/json/libraries/full","id":"full"}],"family":{"name":"Coquette","link":"/api/v1/json/families/drjf","id":"drjf"},"foundry":{"name":"Mark Simonson Studio","slug":"mark-simonson-studio"},"font_style":"normal","postscript_name":"Coquette-Light","font_weight":"300"}}+++++
++++++
 < 404
 < Content-Type: application/json
 "{"message":"font family not found"}"
@@ -234,6 +235,25 @@ The client must authenticate using IMS access token.
 --
 
 Generates a temporary signed URL to download the font resource. The requested font is provisioned for the user bearing the access token.
+
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
+<table>
+    <th>URI parameters </th>
+    <th></th>
+    <th>Format</th>
+    <tr>
+    <td>font id</td>
+    <td>unique id describing particular desktop font variation and version</td>
+    <td>[a-z0-9]{40}</td>
+    </tr>
+</table>
 
 GET desktop/sync/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
@@ -358,6 +378,30 @@ GET desktop/selections/{user_id}/{font_id}
 
 Add a single font variations to the font selection. 
 
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
+<table>
+    <th>URI parameters </th>
+    <th></th>
+    <th>Format</th>
+    <tr>
+    <td>user id</td>
+    <td>URL encoded Adobe profile ID</td>
+    <td>[A-Z0-9]{24}%40AdobeID</td>
+    </tr>
+    <tr>
+    <td>font id</td>
+    <td>unique id describing particular desktop font variation and version</td>
+    <td>TkD-[0-9]{3,5}-[a-z0-9]{40}</td>
+    </tr>
+</table>
+
 POST desktop/selections/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
@@ -373,6 +417,30 @@ POST desktop/selections/{user_id}/{font_id}
 
 Remove a font variation from the collection of sync fonts.
 
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
+
+<table>
+    <th>URI parameters </th>
+    <th></th>
+    <th>Format</th>
+    <tr>
+    <td>user id</td>
+    <td>URL encoded Adobe profile ID</td>
+    <td>[A-Z0-9]{24}%40AdobeID</td>
+    </tr>
+    <tr>
+    <td>font id</td>
+    <td>unique id describing particular desktop font variation and version</td>
+    <td>TkD-[0-9]{3,5}-[a-z0-9]{40}</td>
+    </tr>
+</table>
+
 DELETE desktop/selections/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
@@ -384,6 +452,14 @@ DELETE desktop/selections/{user_id}/{font_id}
 
 Accepts a filled in system font JSON object.
 This method matches it to the available sync fonts and returns a suggested alternative from the Typekit library.
+
+<table>
+    <th>Required header</th>
+    <tr>
+    <td>X-Access-Token</td>
+    <td>valid IMS access token</td>
+    </tr>
+</table>
 
 <table>
     <th>Required JSON body</th>
