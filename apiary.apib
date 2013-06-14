@@ -1,4 +1,4 @@
-HOST: http://typekit.com/api/v1
+HOST: http://typekit.com/api/v2
 
 --- Typekit API ---
 ---
@@ -79,7 +79,27 @@ This data represents a single font variation of a particular version as synced t
     {
         "id": "drjf",
         "name": "Coquette",
-        "biography": "Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early â€™90s. To me, it feels like it has always existed, even though Iâ€™ve never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"",
+        "biography": "Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early 90s. To me, it feels like it has always existed, even though I have never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"",
+        "variations": [
+          {
+            "fvd": "n3",
+            "name": "Coquette Light",
+            "id": "drjf:n3",
+            "link": "/api/v1/json/families/drjf/n3"
+          },
+          {
+            "fvd": "n4",
+            "name": "Coquette Regular",
+            "id": "drjf:n4",
+            "link": "/api/v1/json/families/drjf/n4"
+          },
+          {
+            "fvd": "n7",
+            "name": "Coquette Bold",
+            "id": "drjf:n7",
+            "link": "/api/v1/json/families/drjf/n7"
+          }
+        ],
         "links": {
             "self": "https://typekit.com/api/desktop_v1/font_family/drjf",
             "html": "https://typekit.com/fonts/coquette",
@@ -125,13 +145,11 @@ Some endpoints need to communicate the availability of the requested sync font. 
 ### Editing and comments
 This page and all comments can be written in [Markdown](http://daringfireball.net/projects/markdown/syntax) syntax
 
-### Open issues
-
-* Single font vs. array CRUD requests
-
 ---
 
--- Health & Status
+--
+Health & Status
+--
 
 Verifies that the API is available
 
@@ -152,13 +170,16 @@ GET user
 < Content-Type: application/json
 "{"message":"user not found"}"
 
--- Library
+-- 
+Browsing
+These end points retrieve the underlying model for font families, variations and libraries. Authentication is not required.
+--
 
 Retrieve font family description. Family id is the opaque id assigned to each typekit font family. Returns font family JSON object if found.
 
 Does not require authentication.
 
-GET library/family/{family_id}
+GET families/{family_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -168,11 +189,40 @@ GET library/family/{family_id}
 < Content-Type: application/json
 "{"message":"font family not found"}"
 
+Retrieve font variation description.
+
+Does not require authentication.
+
+GET variations/{variation_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 200
+< Content-Type: application/json
+"{"id":"drjf","name":"Coquette","biography":"Coquette, designed in 2001, could be the result of a happy marriage of Kabel and French Script. According to Mark, \"The idea for this typeface got stuck in my head in the early â€™90s. To me, it feels like it has always existed, even though Iâ€™ve never seen anything quite like it. I am happy to offer this unique yet strangely familiar script.\"","links":{"self":"https://typekit.com/api/desktop_v1/font_family/drjf","html":"https://typekit.com/fonts/coquette","purchase":"http://www.fonts.com/findfonts/mondosearchresults.htm?st=12&kid=Coquette"}}"
++++++
+< 404
+< Content-Type: application/json
+"{"message":"font family not found"}"
+
+-- 
+Desktop Fonts
+These end points expose CRUD operations for the sync fonts selection. 
+
+The client must authenticate using IMS access token.
+--
+
+Generates a temporary signed URL to download the font resource. The requested font is provisioned for the user bearing the access token.
+
+GET desktop/sync/{font_id}
+> X-Access-Token: IMS_ACCESS_TOKEN
+< 302
+< Content-Type: text/html;charset=utf-8
+< Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
+
 Retrieve the description for a specific version of a desktop font.
 
 Does not require authentication.
 
-GET desktop/font/{font_id}
+GET desktop/fonts/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -187,21 +237,11 @@ GET desktop/font/{font_id}
 "{"message":"font variation not found"}"
 
 
--- Desktop Fonts
-
-Generates a temporary signed URL to download the font resource. The requested font is provisioned for the user bearing the access token.
-
-GET desktop/sync/{font_id}
-> X-Access-Token: IMS_ACCESS_TOKEN
-< 302
-< Content-Type: text/html;charset=utf-8
-< Location: https://dnzuu5synxxfk.cloudfront.net/000000000000000000018916/10002/2026/otf?Expires=1370043917&Signature=SHA1_SIGNATURE&Key-Pair-Id=KEYPAIR_ID
-
 List selected fonts for a particular user. Returns a JSON array of font variation objects.
 
 The example models a user who has all 3 variations of the Coquette font in the font selection.
 
-GET desktop/font_selection/{user_id}
+GET desktop/selections/{user_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -211,7 +251,7 @@ Retrieve the description of a particular font variation from the font selection 
 
 If the font variation is not selected by the user this method returns 204. The request is correct but there is no content associated with this query.
 
-GET desktop/font_selection/{user_id}/{font_id}
+GET desktop/selections/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -235,7 +275,7 @@ GET desktop/font_selection/{user_id}/{font_id}
 
 Add a single font variations to the font selection. 
 
-POST desktop/font_selection/{user_id}/{font_id}
+POST desktop/selections/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -250,7 +290,7 @@ POST desktop/font_selection/{user_id}/{font_id}
 
 Remove a font variation from the collection of sync fonts.
 
-DELETE desktop/font_selection/{user_id}/{font_id}
+DELETE desktop/selections/{user_id}/{font_id}
 > X-Access-Token: IMS_ACCESS_TOKEN
 < 200
 < Content-Type: application/json
@@ -259,12 +299,10 @@ DELETE desktop/font_selection/{user_id}/{font_id}
 < Content-Type: application/json
 {"message": "bad request"}
 
--- Font Replacement
-
 Accepts a filled in system font JSON object.
 This method matches it to the available sync fonts and returns a suggested alternative.
 
-GET desktop/resolve_system_font
+GET desktop/match
 > X-Access-Token: IMS_ACCESS_TOKEN
 {"postscript_name":"ProximaNova-Black","style_name":"Black","native_style_name":"Black","full_name":"Proxima Nova Black","native_full_name":"Proxima Nova Black","type":"TrueType","version":"1.0.0"}
 < 200
