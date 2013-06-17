@@ -67,7 +67,11 @@ This data represents a single font variation of a particular version as synced t
         "family_id": "drjf",
         "style": "Thin",
         "family": "Coquette",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "license": [
+            "web",
+            "desktop"
+        ],
         "links": {
             "self": "https://typekit.com/api/desktop_v1/font_variation/TkD-100-2jt9s6h8lq",
             "family": "https://typekit.com/api/desktop_v1/font_family/drjf"
@@ -226,6 +230,31 @@ GET variations/{family_id}/{variation_id}
 < 404
 < Content-Type: application/json
 "{"message":"font family not found"}"
+
+Accepts an array of system font JSON objects.
+This method matches it to the available Typekit fonts and returns an array of suggested alternatives from the Typekit library.
+If the font cannot be matched the method inserts an empty object into the result array.
+
+<table>
+    <th>Required JSON body</th>
+    <tr>
+    <td>postscript_name</td>
+    </tr>
+</table>
+
+<table>
+    <th>Optional JSON body</th>
+    <tr>
+    <td>type</td>
+    <td>ttf | otf</td>
+    </tr>
+</table>
+
+GET desktop/match
+[{"postscript_name":"ProximaNova-Black","style_name":"Black","native_style_name":"Black","full_name":"Proxima Nova Black","native_full_name":"Proxima Nova Black","type":"TrueType","version":"1.0.0"}]
+< 200
+< Content-Type: application/json
+"[{"font_id":"TkD-100-7k90dn92ul","family_id":"vcsm","style":"Black","family":"Proxima Nova","version":"1.0.0","license":["web","desktop"],"links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-7k90dn92ul","family":"https://typekit.com/api/desktop_v1/font_family/vcsm"}}]"
 
 -- 
 Desktop Fonts
@@ -449,39 +478,6 @@ DELETE desktop/selections/{user_id}/{font_id}
 < 400
 < Content-Type: application/json
 {"message": "bad request"}
-
-Accepts a filled in system font JSON object.
-This method matches it to the available sync fonts and returns a suggested alternative from the Typekit library.
-
-<table>
-    <th>Required header</th>
-    <tr>
-    <td>X-Access-Token</td>
-    <td>valid IMS access token</td>
-    </tr>
-</table>
-
-<table>
-    <th>Required JSON body</th>
-    <tr>
-    <td>postscript_name</td>
-    </tr>
-</table>
-
-<table>
-    <th>Optional JSON body</th>
-    <tr>
-    <td>type</td>
-    <td>ttf | otf</td>
-    </tr>
-</table>
-
-GET desktop/match
-> X-Access-Token: IMS_ACCESS_TOKEN
-{"postscript_name":"ProximaNova-Black","style_name":"Black","native_style_name":"Black","full_name":"Proxima Nova Black","native_full_name":"Proxima Nova Black","type":"TrueType","version":"1.0.0"}
-< 200
-< Content-Type: application/json
-"{"font_id":"TkD-100-7k90dn92ul","family_id":"vcsm","style":"Black","family":"Proxima Nova","links":{"self":"https://typekit.com/api/desktop_v1/font_variation/TkD-100-7k90dn92ul","family":"https://typekit.com/api/desktop_v1/font_family/vcsm"}}"
 
 -- JSON Schema Validations --
 
