@@ -325,6 +325,11 @@ GET desktop/fonts/{font_id}
 < Content-Type: application/json
 "{"message":"font variation not found"}"
 
+Get font id array
+
+GET desktop/fonts?ids[]
+< 200
+
 
 List selected fonts for a particular user. Returns a JSON array of font variation objects.
 
